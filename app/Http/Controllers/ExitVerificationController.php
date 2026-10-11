@@ -80,7 +80,7 @@ class ExitVerificationController extends Controller
         }
 
         // If user manually reported discrepancy, tweak count to register discrepancy
-        if (!$pass) {
+        if (! $pass) {
             $items[] = [
                 'sku' => 'UNKNOWN_EXTRA',
                 'name' => 'Unbilled Physical Item',
@@ -135,4 +135,3 @@ class ExitVerificationController extends Controller
         return back()->with('error', 'Discrepancy detected between scanned items and billed receipt! Gate locked.');
     }
 }
-

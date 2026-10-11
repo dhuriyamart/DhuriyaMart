@@ -5,8 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Shop;
-use Database\Seeders\KiranaHardwareSeeder;
-use Database\Seeders\VillageSmartMartSeeder;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,7 +16,7 @@ class KiranaAndHardwareExclusivityTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+        $this->seed(DatabaseSeeder::class);
     }
 
     public function test_only_kirana_and_hardware_categories_exist(): void
@@ -70,7 +69,7 @@ class KiranaAndHardwareExclusivityTest extends TestCase
     {
         $totalProducts = Product::count();
         // 48 Kirana products + 66 Hardware products = 114 products
-        $this->assertEquals(114, $totalProducts, "Product count should be exactly 114 (48 Kirana + 66 Hardware).");
+        $this->assertEquals(114, $totalProducts, 'Product count should be exactly 114 (48 Kirana + 66 Hardware).');
 
         $prohibitedProductNames = [
             'Noise Pulse',
@@ -122,4 +121,3 @@ class KiranaAndHardwareExclusivityTest extends TestCase
         $response->assertDontSee('/categories/home-kitchen');
     }
 }
-

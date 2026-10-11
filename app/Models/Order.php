@@ -145,7 +145,7 @@ class Order extends Model
         if (in_array($this->status, ['cancelled', 'completed', 'refunded'])) {
             return false;
         }
-        return $this->sellerOrders->every(fn($so) => in_array($so->status, ['pending', 'confirmed', 'processing']));
+
+        return $this->sellerOrders->every(fn ($so) => in_array($so->status, ['pending', 'confirmed', 'processing']));
     }
 }
-

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Shop;
 use Illuminate\Http\Request;
@@ -21,7 +19,7 @@ class AdminPriceMonitoringController extends Controller
             if ($kiranaShop) {
                 $q->where('shop_id', $kiranaShop->id);
             } else {
-                $q->whereHas('category', fn($cq) => $cq->where('slug', 'like', '%kirana%')
+                $q->whereHas('category', fn ($cq) => $cq->where('slug', 'like', '%kirana%')
                     ->orWhere('slug', 'grains-flour-pulses')
                     ->orWhere('slug', 'oils-sugar-salt-spices')
                     ->orWhere('slug', 'packaged-food-snacks')
@@ -34,7 +32,7 @@ class AdminPriceMonitoringController extends Controller
             if ($hardwareShop) {
                 $q->where('shop_id', $hardwareShop->id);
             } else {
-                $q->whereHas('category', fn($cq) => $cq->where('slug', 'like', '%hardware%')
+                $q->whereHas('category', fn ($cq) => $cq->where('slug', 'like', '%hardware%')
                     ->orWhere('slug', 'screws-nails-fittings')
                     ->orWhere('slug', 'plumbing-sanitary')
                     ->orWhere('slug', 'electrical-goods')
@@ -44,24 +42,24 @@ class AdminPriceMonitoringController extends Controller
         })->with(['product.category'])->get();
 
         // Calculate Kirana Totals
-        $kiranaCostPaise = (int) $kiranaVariants->sum(fn($v) => ($v->cost_price_paise ?? 0) * $v->stock_quantity);
-        $kiranaSalesPaise = (int) $kiranaVariants->sum(fn($v) => $v->price_paise * $v->stock_quantity);
+        $kiranaCostPaise = (int) $kiranaVariants->sum(fn ($v) => ($v->cost_price_paise ?? 0) * $v->stock_quantity);
+        $kiranaSalesPaise = (int) $kiranaVariants->sum(fn ($v) => $v->price_paise * $v->stock_quantity);
         $kiranaGrossProfitPaise = max(0, $kiranaSalesPaise - $kiranaCostPaise);
         $kiranaTargetBudgetPaise = 40000000; // ₹4,00,000.00
         $kiranaBufferPaise = max(0, $kiranaTargetBudgetPaise - $kiranaCostPaise);
 
         // Group Kirana by Subcategory
-        $kiranaGrouped = $kiranaVariants->groupBy(fn($v) => $v->product->category->name ?? 'General');
+        $kiranaGrouped = $kiranaVariants->groupBy(fn ($v) => $v->product->category->name ?? 'General');
 
         // Calculate Hardware Totals
-        $hardwareCostPaise = (int) $hardwareVariants->sum(fn($v) => ($v->cost_price_paise ?? 0) * $v->stock_quantity);
-        $hardwareSalesPaise = (int) $hardwareVariants->sum(fn($v) => $v->price_paise * $v->stock_quantity);
+        $hardwareCostPaise = (int) $hardwareVariants->sum(fn ($v) => ($v->cost_price_paise ?? 0) * $v->stock_quantity);
+        $hardwareSalesPaise = (int) $hardwareVariants->sum(fn ($v) => $v->price_paise * $v->stock_quantity);
         $hardwareGrossProfitPaise = max(0, $hardwareSalesPaise - $hardwareCostPaise);
         $hardwareTargetBudgetPaise = 40000000; // ₹4,00,000.00
         $hardwareBufferPaise = max(0, $hardwareTargetBudgetPaise - $hardwareCostPaise);
 
         // Group Hardware by Subcategory
-        $hardwareGrouped = $hardwareVariants->groupBy(fn($v) => $v->product->category->name ?? 'General');
+        $hardwareGrouped = $hardwareVariants->groupBy(fn ($v) => $v->product->category->name ?? 'General');
 
         // Official October 2026 Price Monitoring Benchmarks
         $officialBenchmarks = [
@@ -185,4 +183,3 @@ class AdminPriceMonitoringController extends Controller
         ));
     }
 }
-

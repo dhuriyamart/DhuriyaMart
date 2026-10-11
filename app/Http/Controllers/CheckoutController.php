@@ -24,7 +24,7 @@ class CheckoutController extends Controller
     public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return redirect()->guest(route('login'))->with('info', 'Please sign in to proceed with secure checkout.');
         }
 
@@ -34,14 +34,14 @@ class CheckoutController extends Controller
         }
 
         $outOfStock = $this->cartService->validateCartStock($cart);
-        if (!empty($outOfStock)) {
+        if (! empty($outOfStock)) {
             return redirect()->route('cart.index')
                 ->with('error', 'Some items in your cart are currently out of stock. Please adjust quantities.');
         }
 
         $totals = $this->cartService->calculateCartTotals($cart);
         $addresses = $user->addresses()->latest()->get();
-        $groupedItems = $cart->items->groupBy(fn($item) => $item->variant?->product?->shop_id);
+        $groupedItems = $cart->items->groupBy(fn ($item) => $item->variant?->product?->shop_id);
 
         $razorpayKeyId = Setting::get('razorpay_key_id', 'rzp_test_DhuriyaMartSandbox');
         $isSandbox = Setting::get('payment_sandbox_mode', '1') === '1';
@@ -59,7 +59,7 @@ class CheckoutController extends Controller
     public function process(Request $request): View|RedirectResponse
     {
         $user = $request->user();
-        if (!$user) {
+        if (! $user) {
             return redirect()->guest(route('login'));
         }
 
@@ -84,7 +84,7 @@ class CheckoutController extends Controller
         ]);
 
         // Resolve or create shipping address
-        if (!empty($validated['address_id'])) {
+        if (! empty($validated['address_id'])) {
             $shippingAddress = $user->addresses()->findOrFail($validated['address_id']);
         } else {
             $shippingAddress = Address::create([
@@ -139,4 +139,3 @@ class CheckoutController extends Controller
         return view('storefront.order-confirmed', compact('order'));
     }
 }
-

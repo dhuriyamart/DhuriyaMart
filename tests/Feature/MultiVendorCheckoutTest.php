@@ -3,11 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\InventoryMovement;
-use App\Models\Order;
-use App\Models\SellerOrder;
 use App\Services\CartService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -128,4 +126,3 @@ class MultiVendorCheckoutTest extends TestCase
         $this->assertEquals(0, $cart->fresh()->items()->count());
     }
 }
-

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashRegister;
+use App\Models\CashRegisterEntry;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Models\ProductVariant;
+use App\Models\PurchaseOrder;
 use App\Models\Role;
 use App\Models\Shop;
+use App\Models\Store;
 use App\Models\User;
 use App\Services\InventoryService;
 use Illuminate\Http\Request;
@@ -29,7 +33,7 @@ class AdminDashboardController extends Controller
         $completedOrdersCount = Order::where('status', 'completed')->count();
 
         $customerRoleId = Role::where('slug', 'customer')->value('id');
-        $registeredCustomersCount = User::whereHas('roles', fn($q) => $q->where('slug', 'customer'))->count();
+        $registeredCustomersCount = User::whereHas('roles', fn ($q) => $q->where('slug', 'customer'))->count();
 
         $approvedSellersCount = Shop::where('status', 'approved')->count();
         $pendingSellersCount = Shop::where('status', 'pending')->count();
@@ -40,24 +44,24 @@ class AdminDashboardController extends Controller
         $lowStockVariantsCount = $this->inventoryService->getLowStockVariants()->count();
 
         // Village Smart Mart Financial Accounting (Revenue vs COGS vs Expenses vs Net Profit)
-        $paidOrderItems = \App\Models\OrderItem::with('variant')
-            ->whereHas('order', fn($q) => $q->where('payment_status', 'paid'))
+        $paidOrderItems = OrderItem::with('variant')
+            ->whereHas('order', fn ($q) => $q->where('payment_status', 'paid'))
             ->get();
 
-        $grossRevenuePaise = (int) \App\Models\Order::where('payment_status', 'paid')->sum('total_amount_paise');
+        $grossRevenuePaise = (int) Order::where('payment_status', 'paid')->sum('total_amount_paise');
         $cogsPaise = 0;
         foreach ($paidOrderItems as $item) {
-            $unitCost = $item->variant?->cost_price_paise ?? (int)($item->price_paise * 0.80);
+            $unitCost = $item->variant?->cost_price_paise ?? (int) ($item->price_paise * 0.80);
             $cogsPaise += ($unitCost * $item->quantity);
         }
 
         $grossProfitPaise = max(0, $grossRevenuePaise - $cogsPaise);
-        $operatingExpensesPaise = (int) \App\Models\CashRegisterEntry::where('type', 'cash_out')->sum('amount_paise');
+        $operatingExpensesPaise = (int) CashRegisterEntry::where('type', 'cash_out')->sum('amount_paise');
         $netProfitPaise = $grossProfitPaise - $operatingExpensesPaise;
 
-        $totalVillageStores = \App\Models\Store::count();
-        $openRegistersCount = \App\Models\CashRegister::where('status', 'open')->count();
-        $pendingPoCount = \App\Models\PurchaseOrder::where('status', 'draft')->count();
+        $totalVillageStores = Store::count();
+        $openRegistersCount = CashRegister::where('status', 'open')->count();
+        $pendingPoCount = PurchaseOrder::where('status', 'draft')->count();
 
         $recentOrders = Order::with(['user', 'sellerOrders.shop', 'latestPayment'])
             ->latest()
@@ -91,4 +95,3 @@ class AdminDashboardController extends Controller
         ));
     }
 }
-

@@ -30,4 +30,3 @@ class MoneyTest extends TestCase
         $this->assertEquals(100, Money::toPaise(1));
     }
 }
-

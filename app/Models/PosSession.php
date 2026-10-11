@@ -92,11 +92,10 @@ class PosSession extends Model
 
     public function getItemCountAttribute(): int
     {
-        if (empty($this->cart_items) || !is_array($this->cart_items)) {
+        if (empty($this->cart_items) || ! is_array($this->cart_items)) {
             return 0;
         }
 
         return array_sum(array_column($this->cart_items, 'quantity'));
     }
 }
-

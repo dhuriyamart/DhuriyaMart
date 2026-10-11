@@ -18,21 +18,30 @@ class CashDeskController extends Controller
     ) {}
 
     /**
+     * Get or create active primary store.
+     */
+    private function getPrimaryStore(): Store
+    {
+        return Store::where('is_active', true)->first()
+            ?? Store::firstOrCreate(
+                ['code' => 'STORE-MAU-01'],
+                [
+                    'name' => 'Dhuriya Mart - Flagship Village Store #01',
+                    'village_name' => 'Ranipur / Mau Dehat',
+                    'district' => 'Mau',
+                    'state' => 'Uttar Pradesh',
+                    'pincode' => '275101',
+                    'is_active' => true,
+                ]
+            );
+    }
+
+    /**
      * Cash Counter & Daily Reconciliation Register.
      */
     public function index(Request $request): View
     {
-        $store = Store::firstOrCreate(
-            ['code' => 'STORE-MAU-01'],
-            [
-                'name' => 'Dhuriya Mart - Flagship Village Store #01',
-                'village_name' => 'Ranipur / Mau Dehat',
-                'district' => 'Mau',
-                'state' => 'Uttar Pradesh',
-                'pincode' => '275101',
-                'is_active' => true,
-            ]
-        );
+        $store = $this->getPrimaryStore();
 
         $activeRegister = $store->getActiveRegister();
         $date = $request->input('date', now()->toDateString());
@@ -71,10 +80,10 @@ class CashDeskController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $store = Store::where('is_active', true)->firstOrFail();
+        $store = $this->getPrimaryStore();
         $user = $request->user();
 
-        $paise = (int)round($request->opening_float_rupees * 100);
+        $paise = (int) round($request->opening_float_rupees * 100);
 
         $this->cashDeskService->openRegister($store, $user, $paise, $request->notes);
 
@@ -95,7 +104,7 @@ class CashDeskController extends Controller
 
         $register = CashRegister::findOrFail($request->cash_register_id);
         $user = $request->user();
-        $paise = (int)round($request->amount_rupees * 100);
+        $paise = (int) round($request->amount_rupees * 100);
 
         $this->cashDeskService->recordCashEntry(
             $register,
@@ -107,6 +116,7 @@ class CashDeskController extends Controller
         );
 
         $typeLabel = $request->type === 'cash_in' ? 'Cash In (Deposit)' : 'Cash Out (Expense)';
+
         return back()->with('success', "{$typeLabel} of ₹{$request->amount_rupees} recorded successfully.");
     }
 
@@ -123,7 +133,7 @@ class CashDeskController extends Controller
 
         $register = CashRegister::findOrFail($request->cash_register_id);
         $user = $request->user();
-        $actualPaise = (int)round($request->closing_actual_rupees * 100);
+        $actualPaise = (int) round($request->closing_actual_rupees * 100);
 
         $register = $this->cashDeskService->closeRegister(
             $register,
@@ -133,11 +143,11 @@ class CashDeskController extends Controller
         );
 
         $diff = $register->difference_rupees;
-        $statusMsg = $diff == 0 
-            ? "Register closed & 100% balanced! Expected and actual matched perfectly." 
-            : ($diff > 0 
-                ? "Register closed with cash surplus of ₹{$diff}." 
-                : "Register closed with cash shortage of ₹" . abs($diff) . ".");
+        $statusMsg = $diff == 0
+            ? 'Register closed & 100% balanced! Expected and actual matched perfectly.'
+            : ($diff > 0
+                ? "Register closed with cash surplus of ₹{$diff}."
+                : 'Register closed with cash shortage of ₹'.abs($diff).'.');
 
         return back()->with('success', $statusMsg);
     }
@@ -158,17 +168,16 @@ class CashDeskController extends Controller
             ->orWhere('qr_token', $request->customer_identifier)
             ->first();
 
-        if (!$customer) {
+        if (! $customer) {
             return back()->with('error', "No customer found for identifier '{$request->customer_identifier}'.");
         }
 
-        $store = Store::where('is_active', true)->firstOrFail();
+        $store = $this->getPrimaryStore();
         $cashier = $request->user();
-        $paise = (int)round($request->amount_rupees * 100);
+        $paise = (int) round($request->amount_rupees * 100);
 
         $result = $this->cashDeskService->customerDeposit($customer, $cashier, $paise, $store, $request->notes);
 
         return back()->with('success', "Cash deposit of ₹{$request->amount_rupees} accepted for {$customer->name}. New balance: ₹{$result['new_balance_rupees']}.");
     }
 }
-

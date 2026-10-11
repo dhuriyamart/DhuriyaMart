@@ -27,7 +27,7 @@ class AdminOrderController extends Controller
             $term = trim($request->input('q'));
             $query->where(function ($q) use ($term) {
                 $q->where('order_number', 'like', "%{$term}%")
-                    ->orWhereHas('user', fn($uq) => $uq->where('name', 'like', "%{$term}%")->orWhere('email', 'like', "%{$term}%"));
+                    ->orWhereHas('user', fn ($uq) => $uq->where('name', 'like', "%{$term}%")->orWhere('email', 'like', "%{$term}%"));
             });
         }
 
@@ -76,4 +76,3 @@ class AdminOrderController extends Controller
         return back()->with('success', "Order #{$order->order_number} status updated to {$validated['status']}.");
     }
 }
-

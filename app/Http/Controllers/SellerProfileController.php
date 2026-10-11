@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SellerDocument;
-use App\Models\SellerProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -57,7 +56,7 @@ class SellerProfileController extends Controller
             'pickup_address' => $validated['pickup_address'],
         ]);
 
-        if ($request->hasFile('document_file') && !empty($validated['document_type'])) {
+        if ($request->hasFile('document_file') && ! empty($validated['document_type'])) {
             $path = $request->file('document_file')->store('seller_documents', 'local');
             SellerDocument::create([
                 'shop_id' => $shop->id,
@@ -71,4 +70,3 @@ class SellerProfileController extends Controller
         return back()->with('success', 'Shop settings and profile details updated successfully.');
     }
 }
-

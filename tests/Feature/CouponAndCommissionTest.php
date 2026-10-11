@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\Setting;
 use App\Services\CartService;
 use App\Services\CommissionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;

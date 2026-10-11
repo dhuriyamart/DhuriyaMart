@@ -39,6 +39,7 @@ class AuthController extends Controller
 
             if ($user->status === 'suspended') {
                 Auth::logout();
+
                 return back()->withErrors(['email' => 'Your account has been suspended by administration.']);
             }
 
@@ -127,7 +128,7 @@ class AuthController extends Controller
 
         $shopSlug = Str::slug($validated['shop_name']);
         if (Shop::where('slug', $shopSlug)->exists()) {
-            $shopSlug .= '-' . rand(100, 999);
+            $shopSlug .= '-'.rand(100, 999);
         }
 
         $shop = Shop::create([
@@ -170,4 +171,3 @@ class AuthController extends Controller
         return redirect()->route('home')->with('info', 'You have been logged out.');
     }
 }
-

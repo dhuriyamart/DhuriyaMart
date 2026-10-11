@@ -111,4 +111,3 @@ class SellerOrder extends Model
         return in_array($this->status, ['pending', 'confirmed', 'processing']);
     }
 }
-

@@ -45,4 +45,3 @@ class ProductReview extends Model
         return $query->where('status', 'approved');
     }
 }
-

@@ -67,4 +67,3 @@ class SellerSettlement extends Model
         return Money::format($this->net_payout_paise);
     }
 }
-

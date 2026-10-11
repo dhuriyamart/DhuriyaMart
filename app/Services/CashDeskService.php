@@ -108,7 +108,7 @@ class CashDeskService
         $register->status = 'closed';
         $register->closed_at = now();
         if ($notes) {
-            $register->notes = ($register->notes ? $register->notes . " | " : '') . $notes;
+            $register->notes = ($register->notes ? $register->notes.' | ' : '').$notes;
         }
         $register->save();
 
@@ -131,7 +131,7 @@ class CashDeskService
                 'customer_deposit',
                 $amountPaise,
                 null,
-                "Wallet top-up deposit for Customer {$customer->name} ({$customer->customer_id})" . ($notes ? " - {$notes}" : "")
+                "Wallet top-up deposit for Customer {$customer->name} ({$customer->customer_id})".($notes ? " - {$notes}" : '')
             );
 
             return [
@@ -189,4 +189,3 @@ class CashDeskService
         ];
     }
 }
-

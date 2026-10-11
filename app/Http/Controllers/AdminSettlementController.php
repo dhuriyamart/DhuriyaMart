@@ -19,7 +19,7 @@ class AdminSettlementController extends Controller
 
     public function index(): View
     {
-        $shops = Shop::withCount(['sellerOrders as pending_orders_count' => fn($q) => $q->where('status', 'delivered')->where('payout_status', 'unpaid')])
+        $shops = Shop::withCount(['sellerOrders as pending_orders_count' => fn ($q) => $q->where('status', 'delivered')->where('payout_status', 'unpaid')])
             ->get();
 
         $settlements = SellerSettlement::with(['shop', 'items', 'processedBy'])
@@ -36,7 +36,7 @@ class AdminSettlementController extends Controller
         try {
             $settlement = $this->settlementService->generateSettlement($shop, $request->user());
 
-            if (!$settlement) {
+            if (! $settlement) {
                 return back()->with('info', "No unpaid delivered orders found for {$shop->name}.");
             }
 
@@ -76,4 +76,3 @@ class AdminSettlementController extends Controller
         }
     }
 }
-

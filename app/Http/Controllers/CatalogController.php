@@ -30,7 +30,7 @@ class CatalogController extends Controller
     public function product(string $slug): View
     {
         $product = $this->catalogService->getProductBySlug($slug);
-        if (!$product) {
+        if (! $product) {
             abort(404, 'Product not found or currently unavailable.');
         }
 
@@ -67,4 +67,3 @@ class CatalogController extends Controller
         return view('storefront.page', compact('page'));
     }
 }
-

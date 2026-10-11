@@ -25,4 +25,3 @@ class SellerSettlementController extends Controller
         return view('seller.settlements.index', compact('shop', 'ledgerEntries', 'settlements', 'currentBalancePaise'));
     }
 }
-

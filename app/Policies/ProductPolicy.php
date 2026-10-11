@@ -18,7 +18,7 @@ class ProductPolicy
             return true;
         }
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -61,4 +61,3 @@ class ProductPolicy
         return $user->isAdmin();
     }
 }
-

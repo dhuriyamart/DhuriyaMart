@@ -35,7 +35,7 @@ class AdminCategoryController extends Controller
 
         $slug = Str::slug($validated['name']);
         if (Category::where('slug', $slug)->exists()) {
-            $slug .= '-' . rand(10, 99);
+            $slug .= '-'.rand(10, 99);
         }
 
         $validated['slug'] = $slug;
@@ -81,4 +81,3 @@ class AdminCategoryController extends Controller
         return back()->with('success', 'Category deleted.');
     }
 }
-

@@ -17,11 +17,11 @@ class VillageStoreController extends Controller
      */
     public function index(): View
     {
-        $stores = Store::with(['manager', 'cashRegisters' => fn($q) => $q->latest()->take(1)])
+        $stores = Store::with(['manager', 'cashRegisters' => fn ($q) => $q->latest()->take(1)])
             ->withCount(['orders', 'posSessions'])
             ->get();
 
-        $managers = User::whereHas('roles', fn($q) => $q->whereIn('slug', ['admin', 'super-admin', 'store-manager']))
+        $managers = User::whereHas('roles', fn ($q) => $q->whereIn('slug', ['admin', 'super-admin', 'store-manager']))
             ->get();
 
         // Calculate network-wide metrics
@@ -65,11 +65,11 @@ class VillageStoreController extends Controller
     public function toggle(int $id): RedirectResponse
     {
         $store = Store::findOrFail($id);
-        $store->is_active = !$store->is_active;
+        $store->is_active = ! $store->is_active;
         $store->save();
 
         $status = $store->is_active ? 'activated' : 'deactivated';
+
         return back()->with('success', "Store '{$store->name}' has been {$status}.");
     }
 }
-

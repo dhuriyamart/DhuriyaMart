@@ -25,4 +25,3 @@ class OrderPolicy
         return $user->id === $order->user_id && $order->canBeCancelled();
     }
 }
-

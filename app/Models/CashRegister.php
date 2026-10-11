@@ -99,8 +99,7 @@ class CashRegister extends Model
     {
         $this->expected_cash_paise = $this->opening_float_paise + $this->cash_sales_paise + $this->cash_in_paise - $this->cash_out_paise;
         if ($this->closing_actual_paise !== null) {
-            $this->difference_paise = (int)$this->closing_actual_paise - (int)$this->expected_cash_paise;
+            $this->difference_paise = (int) $this->closing_actual_paise - (int) $this->expected_cash_paise;
         }
     }
 }
-

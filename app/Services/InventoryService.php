@@ -26,7 +26,7 @@ class InventoryService
     public function deductStock(ProductVariant $variant, int $quantity, string $reason = 'sale', ?string $referenceId = null, ?User $user = null): InventoryMovement
     {
         if ($quantity <= 0) {
-            throw new RuntimeException("Quantity to deduct must be greater than zero.");
+            throw new RuntimeException('Quantity to deduct must be greater than zero.');
         }
 
         return DB::transaction(function () use ($variant, $quantity, $reason, $referenceId, $user) {
@@ -61,7 +61,7 @@ class InventoryService
     public function restoreStock(ProductVariant $variant, int $quantity, string $reason = 'return', ?string $referenceId = null, ?User $user = null): InventoryMovement
     {
         if ($quantity <= 0) {
-            throw new RuntimeException("Quantity to restore must be greater than zero.");
+            throw new RuntimeException('Quantity to restore must be greater than zero.');
         }
 
         return DB::transaction(function () use ($variant, $quantity, $reason, $referenceId, $user) {
@@ -89,7 +89,7 @@ class InventoryService
     public function adjustStock(ProductVariant $variant, int $newQuantity, string $reason = 'manual_adjustment', ?User $user = null): InventoryMovement
     {
         if ($newQuantity < 0) {
-            throw new RuntimeException("Stock quantity cannot be negative.");
+            throw new RuntimeException('Stock quantity cannot be negative.');
         }
 
         return DB::transaction(function () use ($variant, $newQuantity, $reason, $user) {
@@ -121,10 +121,9 @@ class InventoryService
             ->where('is_active', true);
 
         if ($shop) {
-            $query->whereHas('product', fn($q) => $q->where('shop_id', $shop->id));
+            $query->whereHas('product', fn ($q) => $q->where('shop_id', $shop->id));
         }
 
         return $query->get();
     }
 }
-

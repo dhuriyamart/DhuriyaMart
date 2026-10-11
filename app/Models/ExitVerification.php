@@ -62,4 +62,3 @@ class ExitVerification extends Model
         return $this->status === 'discrepancy_flagged';
     }
 }
-

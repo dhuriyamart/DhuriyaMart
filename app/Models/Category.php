@@ -62,4 +62,3 @@ class Category extends Model
         return $query->whereNull('parent_id');
     }
 }
-

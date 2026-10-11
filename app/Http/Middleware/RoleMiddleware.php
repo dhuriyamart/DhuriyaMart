@@ -15,12 +15,13 @@ class RoleMiddleware
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->guest(route('login'));
         }
 
         if ($user->status === 'suspended') {
             auth()->logout();
+
             return redirect()->route('login')->withErrors([
                 'email' => 'Your account has been suspended. Please contact platform support.',
             ]);
@@ -30,11 +31,10 @@ class RoleMiddleware
             return $next($request);
         }
 
-        if (!$user->hasRole($roles)) {
+        if (! $user->hasRole($roles)) {
             abort(403, 'Unauthorized. You do not possess permissions to access this resource.');
         }
 
         return $next($request);
     }
 }
-

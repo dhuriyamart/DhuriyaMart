@@ -39,4 +39,3 @@ class CashRegisterEntry extends Model
         return round($this->amount_paise / 100, 2);
     }
 }
-

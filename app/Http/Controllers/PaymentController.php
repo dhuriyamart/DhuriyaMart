@@ -69,10 +69,10 @@ class PaymentController extends Controller
     public function mockSuccess(Request $request, int $orderId): RedirectResponse
     {
         $order = Order::findOrFail($orderId);
-        $mockPaymentId = 'pay_mock_' . Str::random(12);
+        $mockPaymentId = 'pay_mock_'.Str::random(12);
 
         $payment = $order->payments()->latest('id')->first();
-        $gatewayOrderId = $payment ? $payment->gateway_order_id : ('order_mock_' . Str::random(10));
+        $gatewayOrderId = $payment ? $payment->gateway_order_id : ('order_mock_'.Str::random(10));
 
         $result = $this->paymentService->verifyPayment($order, [
             'razorpay_order_id' => $gatewayOrderId,
@@ -88,4 +88,3 @@ class PaymentController extends Controller
         return redirect()->route('checkout.index')->with('error', 'Mock payment simulation failed.');
     }
 }
-

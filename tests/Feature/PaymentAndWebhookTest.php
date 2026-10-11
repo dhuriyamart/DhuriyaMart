@@ -68,7 +68,7 @@ class PaymentAndWebhookTest extends TestCase
         $secret = 'rzp_test_DhuriyaMartSecretKey';
         Setting::set('razorpay_key_secret', $secret);
 
-        $txId = 'pay_live_test_' . uniqid();
+        $txId = 'pay_live_test_'.uniqid();
         $gatewayOrderId = $payment->gateway_order_id;
         $signature = hash_hmac('sha256', "{$gatewayOrderId}|{$txId}", $secret);
 
@@ -128,12 +128,12 @@ class PaymentAndWebhookTest extends TestCase
         $paymentService = app(PaymentService::class);
         $payment = $paymentService->createPaymentOrder($order, 'razorpay');
 
-        $eventId = 'evt_test_' . uniqid();
+        $eventId = 'evt_test_'.uniqid();
         $webhookPayload = [
             'event_id' => $eventId,
             'event' => 'payment.captured',
             'order_id' => $payment->gateway_order_id,
-            'payment_id' => 'pay_hook_' . uniqid(),
+            'payment_id' => 'pay_hook_'.uniqid(),
             'amount' => $order->total_amount_paise,
         ];
 

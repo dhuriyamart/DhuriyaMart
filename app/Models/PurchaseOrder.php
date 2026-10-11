@@ -65,4 +65,3 @@ class PurchaseOrder extends Model
         $this->save();
     }
 }
-

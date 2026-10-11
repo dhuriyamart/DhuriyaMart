@@ -35,4 +35,3 @@ class ReturnItem extends Model
         return $this->belongsTo(OrderItem::class);
     }
 }
-

@@ -10,7 +10,8 @@ class Money
     public static function format(int|float|null $paise): string
     {
         $p = (int) ($paise ?? 0);
-        return '₹' . number_format($p / 100, 2);
+
+        return '₹'.number_format($p / 100, 2);
     }
 
     /**
@@ -29,4 +30,3 @@ class Money
         return (int) round(((float) ($rupees ?? 0)) * 100);
     }
 }
-

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SellerOrder;
 use App\Services\OrderService;
 use App\Services\ShippingService;
 use Illuminate\Http\RedirectResponse;
@@ -95,10 +94,10 @@ class SellerOrderController extends Controller
 
         try {
             $this->orderService->cancelSellerOrder($sellerOrder, $validated['reason'], $request->user());
+
             return back()->with('success', 'Seller order cancelled and customer inventory restored.');
         } catch (RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }
     }
 }
-

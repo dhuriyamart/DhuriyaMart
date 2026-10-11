@@ -43,4 +43,3 @@ class SellerOrderPolicy
         return $user->isSeller() && $user->shop && $user->shop->id === $sellerOrder->shop_id;
     }
 }
-

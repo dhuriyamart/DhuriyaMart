@@ -94,7 +94,7 @@ class Shop extends Model
     public function getCurrentBalancePaiseAttribute(): int
     {
         $lastEntry = $this->ledgerEntries()->latest('id')->first();
+
         return $lastEntry ? (int) $lastEntry->balance_after_paise : 0;
     }
 }
-

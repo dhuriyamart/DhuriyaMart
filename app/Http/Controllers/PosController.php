@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\Product;
+use App\Models\PosSession;
 use App\Models\ProductVariant;
 use App\Models\Store;
-use App\Models\User;
 use App\Services\CashDeskService;
 use App\Services\SmartMartService;
 use Illuminate\Http\JsonResponse;
@@ -22,21 +21,29 @@ class PosController extends Controller
     ) {}
 
     /**
-     * Staff-Assisted Billing POS Interface.
+     * Get or create active primary store.
      */
-    public function index(Request $request): View
+    private function getPrimaryStore(): Store
     {
-        $store = Store::firstOrCreate(
-            ['code' => 'STORE-MAU-01'],
-            [
+        return Store::where('is_active', true)->first()
+            ?? Store::first()
+            ?? Store::create([
                 'name' => 'Dhuriya Mart - Flagship Village Store #01',
+                'code' => 'STORE-MAU-01',
                 'village_name' => 'Ranipur / Mau Dehat',
                 'district' => 'Mau',
                 'state' => 'Uttar Pradesh',
                 'pincode' => '275101',
                 'is_active' => true,
-            ]
-        );
+            ]);
+    }
+
+    /**
+     * Staff-Assisted Billing POS Interface.
+     */
+    public function index(Request $request): View
+    {
+        $store = $this->getPrimaryStore();
 
         $cashier = $request->user();
         $session = $this->smartMartService->getOrCreateSession($store, null, $cashier, 'staff_assisted');
@@ -63,7 +70,7 @@ class PosController extends Controller
      */
     public function kiosk(Request $request): View
     {
-        $store = Store::where('is_active', true)->first() ?? Store::first();
+        $store = $this->getPrimaryStore();
         $customer = $request->user();
         $session = $this->smartMartService->getOrCreateSession($store, $customer, null, 'self_service');
 
@@ -94,7 +101,7 @@ class PosController extends Controller
             'quantity' => 'nullable|integer|min:1',
         ]);
 
-        $session = \App\Models\PosSession::findOrFail($request->session_id);
+        $session = PosSession::findOrFail($request->session_id);
         $qty = $request->input('quantity', 1);
 
         try {
@@ -115,6 +122,7 @@ class PosController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
             }
+
             return back()->with('error', $e->getMessage());
         }
     }
@@ -129,8 +137,8 @@ class PosController extends Controller
             'quantity' => 'required|integer|min:0',
         ]);
 
-        $session = \App\Models\PosSession::findOrFail($request->session_id);
-        $session = $this->smartMartService->updateItemQuantity($session, $variantId, (int)$request->quantity);
+        $session = PosSession::findOrFail($request->session_id);
+        $session = $this->smartMartService->updateItemQuantity($session, $variantId, (int) $request->quantity);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -153,7 +161,7 @@ class PosController extends Controller
             'session_id' => 'required|exists:pos_sessions,id',
         ]);
 
-        $session = \App\Models\PosSession::findOrFail($request->session_id);
+        $session = PosSession::findOrFail($request->session_id);
         $session = $this->smartMartService->removeItemFromSession($session, $variantId);
 
         if ($request->wantsJson()) {
@@ -177,7 +185,7 @@ class PosController extends Controller
             'session_id' => 'required|exists:pos_sessions,id',
         ]);
 
-        $session = \App\Models\PosSession::findOrFail($request->session_id);
+        $session = PosSession::findOrFail($request->session_id);
         $this->smartMartService->clearSession($session);
 
         return back()->with('success', 'Cart cleared.');
@@ -189,13 +197,13 @@ class PosController extends Controller
     public function customerLookup(Request $request): JsonResponse
     {
         $query = $request->query('query');
-        if (!$query) {
+        if (! $query) {
             return response()->json(['found' => false]);
         }
 
         $customer = $this->smartMartService->findCustomerByIdentifier($query);
 
-        if (!$customer) {
+        if (! $customer) {
             return response()->json(['found' => false, 'message' => 'Customer not found.']);
         }
 
@@ -211,7 +219,7 @@ class PosController extends Controller
                 'phone' => $customer->phone,
                 'village_name' => $customer->village_name,
                 'wallet_balance_rupees' => $customer->wallet_balance_rupees,
-            ]
+            ],
         ]);
     }
 
@@ -227,10 +235,10 @@ class PosController extends Controller
             'customer_identifier' => 'nullable|string',
         ]);
 
-        $session = \App\Models\PosSession::findOrFail($request->session_id);
+        $session = PosSession::findOrFail($request->session_id);
 
-        $cashTenderedPaise = $request->cash_tendered_rupees 
-            ? (int)round($request->cash_tendered_rupees * 100) 
+        $cashTenderedPaise = $request->cash_tendered_rupees
+            ? (int) round($request->cash_tendered_rupees * 100)
             : null;
 
         try {
@@ -262,4 +270,3 @@ class PosController extends Controller
         ]);
     }
 }
-

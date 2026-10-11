@@ -44,4 +44,3 @@ class CustomerCardController extends Controller
         return back();
     }
 }
-

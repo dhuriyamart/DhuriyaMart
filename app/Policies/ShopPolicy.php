@@ -16,4 +16,3 @@ class ShopPolicy
         return $user->id === $shop->user_id;
     }
 }
-

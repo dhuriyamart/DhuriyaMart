@@ -14,6 +14,7 @@ class AdminCouponController extends Controller
     public function index(): View
     {
         $coupons = Coupon::withCount('redemptions')->latest()->paginate(15);
+
         return view('admin.coupons.index', compact('coupons'));
     }
 
@@ -39,8 +40,8 @@ class AdminCouponController extends Controller
             'description' => $validated['description'] ?? null,
             'discount_type' => $validated['discount_type'],
             'discount_value' => $discountValue,
-            'min_order_value_paise' => !empty($validated['min_order_value']) ? Money::toPaise($validated['min_order_value']) : 0,
-            'max_discount_paise' => !empty($validated['max_discount']) ? Money::toPaise($validated['max_discount']) : null,
+            'min_order_value_paise' => ! empty($validated['min_order_value']) ? Money::toPaise($validated['min_order_value']) : 0,
+            'max_discount_paise' => ! empty($validated['max_discount']) ? Money::toPaise($validated['max_discount']) : null,
             'usage_limit' => $validated['usage_limit'] ?? null,
             'is_active' => true,
             'starts_at' => now(),
@@ -55,7 +56,7 @@ class AdminCouponController extends Controller
     public function toggle(int $id): RedirectResponse
     {
         $coupon = Coupon::findOrFail($id);
-        $coupon->update(['is_active' => !$coupon->is_active]);
+        $coupon->update(['is_active' => ! $coupon->is_active]);
 
         return back()->with('success', "Coupon '{$coupon->code}' active status toggled.");
     }
@@ -69,4 +70,3 @@ class AdminCouponController extends Controller
         return back()->with('success', 'Coupon deleted.');
     }
 }
-

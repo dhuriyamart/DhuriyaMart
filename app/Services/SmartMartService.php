@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\CashRegister;
 use App\Models\CashRegisterEntry;
 use App\Models\ExitVerification;
 use App\Models\InventoryMovement;
@@ -50,9 +49,9 @@ class SmartMartService
 
         $session = $query->latest()->first();
 
-        if (!$session) {
+        if (! $session) {
             $session = PosSession::create([
-                'session_code' => 'POS-' . strtoupper(Str::random(8)),
+                'session_code' => 'POS-'.strtoupper(Str::random(8)),
                 'store_id' => $store->id,
                 'cashier_id' => $cashier?->id,
                 'customer_id' => $customer?->id,
@@ -77,10 +76,10 @@ class SmartMartService
         $variant = ProductVariant::with('product')
             ->where('barcode', $barcodeOrSku)
             ->orWhere('sku', $barcodeOrSku)
-            ->orWhere('id', is_numeric($barcodeOrSku) ? (int)$barcodeOrSku : 0)
+            ->orWhere('id', is_numeric($barcodeOrSku) ? (int) $barcodeOrSku : 0)
             ->first();
 
-        if (!$variant) {
+        if (! $variant) {
             throw new \InvalidArgumentException("Product not found for code: {$barcodeOrSku}");
         }
 
@@ -102,9 +101,9 @@ class SmartMartService
                 'variant_id' => $variant->id,
                 'sku' => $variant->sku,
                 'barcode' => $variant->barcode,
-                'name' => $variant->product->name . ' - ' . $variant->name,
+                'name' => $variant->product->name.' - '.$variant->name,
                 'price_paise' => $variant->price_paise,
-                'cost_price_paise' => $variant->cost_price_paise ?? (int)($variant->price_paise * 0.8),
+                'cost_price_paise' => $variant->cost_price_paise ?? (int) ($variant->price_paise * 0.8),
                 'quantity' => $quantity,
                 'subtotal_paise' => $variant->price_paise * $quantity,
                 'tax_paise' => 0,
@@ -184,7 +183,7 @@ class SmartMartService
 
         return DB::transaction(function () use ($session, $paymentMethod, $cashTenderedPaise, $customerIdentifier) {
             // Associate customer if identifier provided
-            if ($customerIdentifier && !$session->customer_id) {
+            if ($customerIdentifier && ! $session->customer_id) {
                 $found = $this->findCustomerByIdentifier($customerIdentifier);
                 if ($found) {
                     $session->customer_id = $found->id;
@@ -193,7 +192,7 @@ class SmartMartService
 
             // Fallback user if walk-in guest
             $userId = $session->customer_id;
-            if (!$userId) {
+            if (! $userId) {
                 $guestUser = User::firstOrCreate(
                     ['email' => 'walkin.guest@dhuriyamart.com'],
                     [
@@ -209,7 +208,7 @@ class SmartMartService
                 $userId = $guestUser->id;
             }
 
-            $orderNumber = 'DM-POS-' . strtoupper(Str::random(8));
+            $orderNumber = 'DM-POS-'.strtoupper(Str::random(8));
             $order = Order::create([
                 'order_number' => $orderNumber,
                 'user_id' => $userId,
@@ -239,7 +238,7 @@ class SmartMartService
                         'shop_id' => $shopId,
                     ],
                     [
-                        'seller_order_number' => 'SO-' . $order->order_number . '-' . $shopId,
+                        'seller_order_number' => 'SO-'.$order->order_number.'-'.$shopId,
                         'status' => 'delivered',
                         'subtotal_paise' => 0,
                         'total_amount_paise' => 0,
@@ -285,7 +284,7 @@ class SmartMartService
                         'quantity_change' => -$item['quantity'],
                         'stock_after' => $variant->stock_quantity,
                         'reference_type' => 'pos_order',
-                        'reference_id' => (string)$order->id,
+                        'reference_id' => (string) $order->id,
                         'notes' => "POS sale deduction {$order->order_number}",
                     ]);
                 }
@@ -295,7 +294,7 @@ class SmartMartService
             Payment::create([
                 'order_id' => $order->id,
                 'gateway' => $paymentMethod,
-                'transaction_id' => 'TXN-' . strtoupper(Str::random(10)),
+                'transaction_id' => 'TXN-'.strtoupper(Str::random(10)),
                 'amount_paise' => $order->total_amount_paise,
                 'status' => 'captured',
                 'payload' => [
@@ -351,7 +350,7 @@ class SmartMartService
         $isPassed = ($billedItemsCount === $scannedItemsCount);
 
         return ExitVerification::create([
-            'verification_code' => 'EXIT-' . strtoupper(Str::random(8)),
+            'verification_code' => 'EXIT-'.strtoupper(Str::random(8)),
             'store_id' => $order->store_id ?? 1,
             'order_id' => $order->id,
             'pos_session_id' => $order->posSession?->id,
@@ -425,7 +424,7 @@ class SmartMartService
         $isPassed = empty($discrepancies);
 
         return ExitVerification::create([
-            'verification_code' => 'AUTO-GATE-' . strtoupper(Str::random(8)),
+            'verification_code' => 'AUTO-GATE-'.strtoupper(Str::random(8)),
             'store_id' => $order->store_id ?? 1,
             'order_id' => $order->id,
             'pos_session_id' => $order->posSession?->id,
@@ -436,8 +435,8 @@ class SmartMartService
             'total_scanned_items' => $totalScanned,
             'scanned_items' => $scannedMap,
             'discrepancy_details' => $isPassed ? null : $discrepancies,
-            'notes' => $isPassed 
-                ? 'Automated barcode scanner verified 100% match. Gate unlocked.' 
+            'notes' => $isPassed
+                ? 'Automated barcode scanner verified 100% match. Gate unlocked.'
                 : 'Automated scan detected discrepancy. Gate locked. Cashier intervention requested.',
             'verified_at' => now(),
         ]);

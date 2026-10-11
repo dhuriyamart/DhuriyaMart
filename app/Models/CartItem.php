@@ -51,4 +51,3 @@ class CartItem extends Model
         return Money::format($this->total_paise);
     }
 }
-

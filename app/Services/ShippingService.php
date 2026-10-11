@@ -60,7 +60,7 @@ class ShippingService
         }
 
         $shipment->update($data);
+
         return $shipment;
     }
 }
-

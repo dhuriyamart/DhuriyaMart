@@ -2,9 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductVariant;
 use Database\Seeders\KiranaHardwareSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -58,4 +55,3 @@ class AdminPriceMonitoringTest extends TestCase
         $this->actingAs($customer)->get('/admin/price-monitoring')->assertStatus(403);
     }
 }
-

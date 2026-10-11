@@ -21,9 +21,9 @@ class AdminReportController extends Controller
         $totalDeliveredCount = SellerOrder::where('status', 'delivered')->count();
 
         // Shop-wise performance
-        $shopPerformance = Shop::withCount(['sellerOrders' => fn($q) => $q->where('status', '!=', 'cancelled')])
-            ->withSum(['sellerOrders as gross_sales' => fn($q) => $q->where('status', '!=', 'cancelled')], 'total_amount_paise')
-            ->withSum(['sellerOrders as total_commission' => fn($q) => $q->where('status', '!=', 'cancelled')], 'commission_amount_paise')
+        $shopPerformance = Shop::withCount(['sellerOrders' => fn ($q) => $q->where('status', '!=', 'cancelled')])
+            ->withSum(['sellerOrders as gross_sales' => fn ($q) => $q->where('status', '!=', 'cancelled')], 'total_amount_paise')
+            ->withSum(['sellerOrders as total_commission' => fn ($q) => $q->where('status', '!=', 'cancelled')], 'commission_amount_paise')
             ->get();
 
         // Payment method distribution
@@ -41,4 +41,3 @@ class AdminReportController extends Controller
         ));
     }
 }
-

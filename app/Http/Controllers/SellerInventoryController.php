@@ -20,12 +20,12 @@ class SellerInventoryController extends Controller
     {
         $shop = $request->user()->shop;
 
-        $variants = ProductVariant::whereHas('product', fn($q) => $q->where('shop_id', $shop->id))
+        $variants = ProductVariant::whereHas('product', fn ($q) => $q->where('shop_id', $shop->id))
             ->with(['product'])
             ->orderBy('stock_quantity')
             ->paginate(20);
 
-        $recentMovements = InventoryMovement::whereHas('variant.product', fn($q) => $q->where('shop_id', $shop->id))
+        $recentMovements = InventoryMovement::whereHas('variant.product', fn ($q) => $q->where('shop_id', $shop->id))
             ->with('variant.product')
             ->latest()
             ->take(10)
@@ -38,7 +38,7 @@ class SellerInventoryController extends Controller
     {
         $shop = $request->user()->shop;
 
-        $variant = ProductVariant::whereHas('product', fn($q) => $q->where('shop_id', $shop->id))
+        $variant = ProductVariant::whereHas('product', fn ($q) => $q->where('shop_id', $shop->id))
             ->findOrFail($variantId);
 
         $validated = $request->validate([
@@ -60,4 +60,3 @@ class SellerInventoryController extends Controller
         }
     }
 }
-

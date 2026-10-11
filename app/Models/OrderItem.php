@@ -77,4 +77,3 @@ class OrderItem extends Model
         return Money::format($this->total_paise);
     }
 }
-

@@ -2,51 +2,58 @@
 
 namespace Tests;
 
+use App\Models\Address;
+use App\Models\SellerProfile;
+use App\Models\Setting;
+use App\Models\Shop;
+use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Str;
 
 abstract class TestCase extends BaseTestCase
 {
     protected function seedBasicSettings(): void
     {
-        \App\Models\Setting::set('site_name', 'DhuriyaMart');
-        \App\Models\Setting::set('site_currency', 'INR');
-        \App\Models\Setting::set('default_commission_rate', '10.00');
-        \App\Models\Setting::set('free_shipping_threshold_paise', '49900');
-        \App\Models\Setting::set('standard_shipping_fee_paise', '4900');
-        \App\Models\Setting::set('tax_rate_percent', '5.00');
-        \App\Models\Setting::set('payment_sandbox_mode', '1');
-        \App\Models\Setting::set('cod_enabled', '1');
+        Setting::set('site_name', 'DhuriyaMart');
+        Setting::set('site_currency', 'INR');
+        Setting::set('default_commission_rate', '10.00');
+        Setting::set('free_shipping_threshold_paise', '49900');
+        Setting::set('standard_shipping_fee_paise', '4900');
+        Setting::set('tax_rate_percent', '5.00');
+        Setting::set('payment_sandbox_mode', '1');
+        Setting::set('cod_enabled', '1');
     }
 
-    protected function createAdminUser(): \App\Models\User
+    protected function createAdminUser(): User
     {
-        $admin = \App\Models\User::factory()->create([
-            'email' => 'admin_' . uniqid() . '@dhuriyamart.com',
+        $admin = User::factory()->create([
+            'email' => 'admin_'.uniqid().'@dhuriyamart.com',
             'status' => 'active',
         ]);
         $admin->assignRole('admin');
+
         return $admin->fresh(['roles']);
     }
 
-    protected function createSellerUser(string $shopName = 'Test Shop', string $status = 'approved'): \App\Models\User
+    protected function createSellerUser(string $shopName = 'Test Shop', string $status = 'approved'): User
     {
-        $user = \App\Models\User::factory()->create([
-            'email' => 'seller_' . uniqid() . '@dhuriyamart.com',
+        $user = User::factory()->create([
+            'email' => 'seller_'.uniqid().'@dhuriyamart.com',
             'status' => 'active',
         ]);
         $user->assignRole('seller');
 
-        $slug = \Illuminate\Support\Str::slug($shopName . '-' . uniqid());
-        $shop = \App\Models\Shop::create([
+        $slug = Str::slug($shopName.'-'.uniqid());
+        $shop = Shop::create([
             'user_id' => $user->id,
             'name' => $shopName,
             'slug' => $slug,
-            'email' => 'contact_' . uniqid() . '@seller.com',
+            'email' => 'contact_'.uniqid().'@seller.com',
             'status' => $status,
             'commission_rate' => 10.00,
         ]);
 
-        \App\Models\SellerProfile::create([
+        SellerProfile::create([
             'shop_id' => $shop->id,
             'gstin' => '29ABCDE1234F1Z5',
             'pan_number' => 'ABCDE1234F',
@@ -61,15 +68,15 @@ abstract class TestCase extends BaseTestCase
         return $user->fresh(['shop.profile', 'roles']);
     }
 
-    protected function createCustomerUser(): \App\Models\User
+    protected function createCustomerUser(): User
     {
-        $user = \App\Models\User::factory()->create([
-            'email' => 'customer_' . uniqid() . '@example.com',
+        $user = User::factory()->create([
+            'email' => 'customer_'.uniqid().'@example.com',
             'status' => 'active',
         ]);
         $user->assignRole('customer');
 
-        \App\Models\Address::create([
+        Address::create([
             'user_id' => $user->id,
             'name' => $user->name,
             'phone' => '9876543210',
@@ -85,4 +92,3 @@ abstract class TestCase extends BaseTestCase
         return $user->fresh(['addresses', 'roles']);
     }
 }
-

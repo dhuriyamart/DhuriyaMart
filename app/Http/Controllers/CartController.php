@@ -18,6 +18,7 @@ class CartController extends Controller
     {
         $user = $request->user();
         $sessionId = $request->session()->getId();
+
         return $this->cartService->getOrCreateCart($user, $sessionId);
     }
 
@@ -28,7 +29,7 @@ class CartController extends Controller
         $outOfStock = $this->cartService->validateCartStock($cart);
 
         // Group items by shop for multi-vendor visibility
-        $groupedItems = $cart->items->groupBy(fn($item) => $item->variant?->product?->shop_id);
+        $groupedItems = $cart->items->groupBy(fn ($item) => $item->variant?->product?->shop_id);
 
         return view('storefront.cart', compact('cart', 'totals', 'outOfStock', 'groupedItems'));
     }
@@ -46,6 +47,7 @@ class CartController extends Controller
 
         try {
             $this->cartService->addItem($cart, $variantId, $quantity);
+
             return back()->with('success', 'Item successfully added to your DhuriyaMart cart!');
         } catch (RuntimeException $e) {
             return back()->with('error', $e->getMessage());
@@ -63,6 +65,7 @@ class CartController extends Controller
 
         try {
             $this->cartService->updateItem($cart, $id, $quantity);
+
             return back()->with('success', 'Cart updated successfully.');
         } catch (RuntimeException $e) {
             return back()->with('error', $e->getMessage());
@@ -101,4 +104,3 @@ class CartController extends Controller
         return back()->with('info', 'Coupon removed.');
     }
 }
-

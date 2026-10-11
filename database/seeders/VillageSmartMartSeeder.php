@@ -6,7 +6,6 @@ use App\Models\CashRegister;
 use App\Models\CashRegisterEntry;
 use App\Models\ExitVerification;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\PosSession;
 use App\Models\ProductVariant;
 use App\Models\PurchaseOrder;
@@ -17,7 +16,6 @@ use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class VillageSmartMartSeeder extends Seeder
 {
@@ -241,7 +239,7 @@ class VillageSmartMartSeeder extends Seeder
                             'price_paise' => $oilVariant->price_paise,
                             'subtotal_paise' => $oilVariant->price_paise,
                             'tax_paise' => 0,
-                        ]
+                        ],
                     ],
                     'subtotal_paise' => ($aataVariant->price_paise * 2) + $oilVariant->price_paise,
                     'discount_paise' => 0,
@@ -318,7 +316,7 @@ class VillageSmartMartSeeder extends Seeder
             $totalPoCost = 0;
             foreach ($lowStockVariants as $variant) {
                 $orderQty = 50; // standard restock batch
-                $unitCost = $variant->cost_price_paise ?? (int)($variant->price_paise * 0.82);
+                $unitCost = $variant->cost_price_paise ?? (int) ($variant->price_paise * 0.82);
                 $totalItemCost = $unitCost * $orderQty;
                 $totalPoCost += $totalItemCost;
 
@@ -343,4 +341,3 @@ class VillageSmartMartSeeder extends Seeder
         }
     }
 }
-

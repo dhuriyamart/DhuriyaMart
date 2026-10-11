@@ -5,9 +5,7 @@ namespace Tests\Feature;
 use App\Models\CashRegister;
 use App\Models\ExitVerification;
 use App\Models\Order;
-use App\Models\PosSession;
 use App\Models\ProductVariant;
-use App\Models\PurchaseOrder;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\Supplier;
@@ -15,6 +13,7 @@ use App\Models\User;
 use App\Services\AutoPurchaseOrderService;
 use App\Services\CashDeskService;
 use App\Services\SmartMartService;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,17 +22,22 @@ class VillageSmartMartTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $customer;
+
     protected User $cashier;
+
     protected Store $store;
+
     protected ProductVariant $variant;
+
     protected Supplier $supplier;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+        $this->seed(DatabaseSeeder::class);
 
         $this->admin = User::where('email', 'admin@dhuriyamart.com')->first();
         $this->customer = User::where('email', 'customer@dhuriyamart.com')->first();

@@ -44,4 +44,3 @@ class SellerLedgerEntry extends Model
         return Money::format($this->balance_after_paise);
     }
 }
-

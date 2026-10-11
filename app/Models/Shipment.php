@@ -34,4 +34,3 @@ class Shipment extends Model
         return $this->belongsTo(SellerOrder::class);
     }
 }
-

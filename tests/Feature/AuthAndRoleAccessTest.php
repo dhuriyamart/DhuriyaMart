@@ -2,9 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\ProductVariant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -117,4 +114,3 @@ class AuthAndRoleAccessTest extends TestCase
             ->assertStatus(200);
     }
 }
-

@@ -126,4 +126,3 @@ class SellerDataIsolationTest extends TestCase
         $this->assertNotEquals('dispatched', $sellerOrderB->fresh()->status);
     }
 }
-

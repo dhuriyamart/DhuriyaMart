@@ -107,4 +107,3 @@ class ProductModerationTest extends TestCase
         $this->assertEquals('Incomplete specifications and trademark conflict', $product->fresh()->rejection_reason);
     }
 }
-

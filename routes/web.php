@@ -9,28 +9,28 @@ use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminPaymentController;
 use App\Http\Controllers\AdminPriceMonitoringController;
 use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\AdminPurchaseOrderController;
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminSellerController;
-use App\Http\Controllers\AdminSettlementController;
 use App\Http\Controllers\AdminSettingController;
+use App\Http\Controllers\AdminSettlementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CashDeskController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CustomerCardController;
+use App\Http\Controllers\ExitVerificationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerInventoryController;
 use App\Http\Controllers\SellerOrderController;
 use App\Http\Controllers\SellerProductController;
 use App\Http\Controllers\SellerProfileController;
 use App\Http\Controllers\SellerSettlementController;
-use App\Http\Controllers\PosController;
-use App\Http\Controllers\ExitVerificationController;
-use App\Http\Controllers\CashDeskController;
-use App\Http\Controllers\AdminPurchaseOrderController;
 use App\Http\Controllers\VillageStoreController;
-use App\Http\Controllers\CustomerCardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -240,4 +240,3 @@ Route::middleware(['auth', 'role:super-admin,admin,store-manager,cashier'])->gro
     Route::post('/pos/exit-verification/staff', [ExitVerificationController::class, 'verifyStaff'])->name('pos.exit-verification.staff');
     Route::post('/pos/exit-verification/automated', [ExitVerificationController::class, 'verifyAutomated'])->name('pos.exit-verification.automated');
 });
-

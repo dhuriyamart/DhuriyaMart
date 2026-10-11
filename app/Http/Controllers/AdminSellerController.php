@@ -72,4 +72,3 @@ class AdminSellerController extends Controller
         return back()->with('success', "Shop '{$shop->name}' status updated to {$validated['status']}.");
     }
 }
-

@@ -15,7 +15,7 @@ class EnsureSellerApproved
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->guest(route('login'));
         }
 
@@ -26,7 +26,7 @@ class EnsureSellerApproved
 
         $shop = $user->shop;
 
-        if (!$shop) {
+        if (! $shop) {
             return redirect()->route('seller.onboarding')
                 ->with('warning', 'Please complete your shop profile and KYC onboarding to get started.');
         }
@@ -37,10 +37,9 @@ class EnsureSellerApproved
 
         if ($shop->status !== 'approved') {
             return redirect()->route('seller.dashboard')
-                ->with('error', 'Your shop verification is currently ' . $shop->status . '. You can manage products and inventory once approved by administration.');
+                ->with('error', 'Your shop verification is currently '.$shop->status.'. You can manage products and inventory once approved by administration.');
         }
 
         return $next($request);
     }
 }
-

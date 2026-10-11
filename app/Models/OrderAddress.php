@@ -35,11 +35,11 @@ class OrderAddress extends Model
         $parts = array_filter([
             $this->address_line1,
             $this->address_line2,
-            $this->landmark ? 'Near ' . $this->landmark : null,
+            $this->landmark ? 'Near '.$this->landmark : null,
             "{$this->city}, {$this->state} - {$this->postal_code}",
             $this->country,
         ]);
+
         return implode(', ', $parts);
     }
 }
-

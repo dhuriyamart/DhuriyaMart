@@ -45,7 +45,7 @@ class CatalogService
         $query = Product::published()
             ->with(['shop', 'category', 'images', 'variants']);
 
-        if (!empty($filters['q'])) {
+        if (! empty($filters['q'])) {
             $term = trim($filters['q']);
             $query->where(function (Builder $q) use ($term) {
                 $q->where('name', 'like', "%{$term}%")
@@ -53,12 +53,12 @@ class CatalogService
                     ->orWhere('description', 'like', "%{$term}%")
                     ->orWhereHas('variants', function (Builder $vq) use ($term) {
                         $vq->where('sku', 'like', "%{$term}%")
-                           ->orWhere('name', 'like', "%{$term}%");
+                            ->orWhere('name', 'like', "%{$term}%");
                     });
             });
         }
 
-        if (!empty($filters['category'])) {
+        if (! empty($filters['category'])) {
             $catSlug = $filters['category'];
             $category = Category::where('slug', $catSlug)->first();
             if ($category) {
@@ -67,9 +67,9 @@ class CatalogService
             }
         }
 
-        if (!empty($filters['shop'])) {
+        if (! empty($filters['shop'])) {
             $shopSlug = $filters['shop'];
-            $query->whereHas('shop', fn($q) => $q->where('slug', $shopSlug));
+            $query->whereHas('shop', fn ($q) => $q->where('slug', $shopSlug));
         }
 
         if (isset($filters['min_price']) && is_numeric($filters['min_price'])) {
@@ -82,7 +82,7 @@ class CatalogService
             $query->where('base_price_paise', '<=', $maxPaise);
         }
 
-        if (!empty($filters['in_stock'])) {
+        if (! empty($filters['in_stock'])) {
             $query->whereHas('variants', function (Builder $q) {
                 $q->where('stock_quantity', '>', 0);
             });
@@ -126,7 +126,7 @@ class CatalogService
     {
         return Category::active()
             ->parents()
-            ->with(['children' => fn($q) => $q->active()])
+            ->with(['children' => fn ($q) => $q->active()])
             ->orderBy('sort_order')
             ->get();
     }
@@ -139,4 +139,3 @@ class CatalogService
             ->get();
     }
 }
-

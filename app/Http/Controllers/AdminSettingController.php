@@ -13,6 +13,7 @@ class AdminSettingController extends Controller
     public function index(): View
     {
         $settings = Setting::all()->pluck('value', 'key');
+
         return view('admin.settings.index', compact('settings'));
     }
 
@@ -29,4 +30,3 @@ class AdminSettingController extends Controller
         return back()->with('success', 'Marketplace settings saved successfully.');
     }
 }
-

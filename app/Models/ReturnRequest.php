@@ -41,4 +41,3 @@ class ReturnRequest extends Model
         return $this->hasMany(ReturnItem::class);
     }
 }
-

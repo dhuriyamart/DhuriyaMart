@@ -68,7 +68,7 @@ class AdminProductController extends Controller
     public function toggleFeatured(int $id): RedirectResponse
     {
         $product = Product::findOrFail($id);
-        $product->update(['is_featured' => !$product->is_featured]);
+        $product->update(['is_featured' => ! $product->is_featured]);
 
         return back()->with('success', "Featured status toggled for {$product->name}.");
     }
@@ -82,4 +82,3 @@ class AdminProductController extends Controller
         return back()->with('success', 'Product permanently deleted.');
     }
 }
-

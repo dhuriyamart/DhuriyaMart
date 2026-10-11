@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function defaultAddress(): ?Address
     {
-        return $this->addresses()->where('is_default', true)->first() 
+        return $this->addresses()->where('is_default', true)->first()
             ?? $this->addresses()->first();
     }
 
@@ -88,6 +88,7 @@ class User extends Authenticatable
     public function hasRole(string|array $role): bool
     {
         $roles = is_array($role) ? $role : [$role];
+
         return $this->roles->pluck('slug')->intersect($roles)->isNotEmpty();
     }
 
@@ -126,7 +127,7 @@ class User extends Authenticatable
         $role = Role::firstOrCreate(['slug' => $slug], [
             'name' => ucwords(str_replace('-', ' ', $slug)),
         ]);
-        if (!$this->roles->contains($role->id)) {
+        if (! $this->roles->contains($role->id)) {
             $this->roles()->attach($role->id);
         }
     }
@@ -155,11 +156,11 @@ class User extends Authenticatable
     {
         $updated = false;
         if (empty($this->customer_id)) {
-            $this->customer_id = 'DM-CUST-' . str_pad($this->id, 5, '0', STR_PAD_LEFT);
+            $this->customer_id = 'DM-CUST-'.str_pad($this->id, 5, '0', STR_PAD_LEFT);
             $updated = true;
         }
         if (empty($this->qr_token)) {
-            $this->qr_token = 'DMQR-' . strtoupper(substr(hash('sha256', $this->id . $this->email . 'dhuriyamart_token'), 0, 12));
+            $this->qr_token = 'DMQR-'.strtoupper(substr(hash('sha256', $this->id.$this->email.'dhuriyamart_token'), 0, 12));
             $updated = true;
         }
         if ($updated) {
@@ -167,4 +168,3 @@ class User extends Authenticatable
         }
     }
 }
-

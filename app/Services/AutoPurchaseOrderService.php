@@ -62,6 +62,7 @@ class AutoPurchaseOrderService
                 if (str_contains($catSlug, 'hardware') || str_contains($catSlug, 'tool') || str_contains($catSlug, 'paint')) {
                     return 'hardware';
                 }
+
                 return 'general';
             });
 
@@ -69,7 +70,7 @@ class AutoPurchaseOrderService
                 $matchedSupplier = $suppliers->firstWhere('category', $catType) ?? $defaultSupplier;
 
                 $po = PurchaseOrder::create([
-                    'po_number' => 'PO-' . date('Ym') . '-' . strtoupper(Str::random(5)),
+                    'po_number' => 'PO-'.date('Ym').'-'.strtoupper(Str::random(5)),
                     'store_id' => $store->id,
                     'supplier_id' => $matchedSupplier->id,
                     'created_by_id' => $creator->id,
@@ -84,7 +85,7 @@ class AutoPurchaseOrderService
                 foreach ($variants as $variant) {
                     // Restock quantity: target minimum threshold * 5, or defaultRestockQty
                     $targetQty = max($defaultRestockQty, $variant->low_stock_threshold * 4);
-                    $unitCost = $variant->cost_price_paise ?? (int)($variant->price_paise * 0.82);
+                    $unitCost = $variant->cost_price_paise ?? (int) ($variant->price_paise * 0.82);
                     $lineTotal = $unitCost * $targetQty;
                     $totalCost += $lineTotal;
 
@@ -132,8 +133,8 @@ class AutoPurchaseOrderService
             $allReceived = true;
 
             foreach ($po->items as $item) {
-                $qtyRecv = (int)($receivedQuantities[$item->id] ?? $item->quantity_ordered);
-                $qtyDamaged = (int)($damagedQuantities[$item->id] ?? 0);
+                $qtyRecv = (int) ($receivedQuantities[$item->id] ?? $item->quantity_ordered);
+                $qtyDamaged = (int) ($damagedQuantities[$item->id] ?? 0);
                 $goodQty = max(0, $qtyRecv - $qtyDamaged);
 
                 $item->quantity_received += $goodQty;
@@ -162,7 +163,7 @@ class AutoPurchaseOrderService
                             'quantity_change' => $goodQty,
                             'stock_after' => $variant->stock_quantity,
                             'reference_type' => 'purchase_order',
-                            'reference_id' => (string)$po->id,
+                            'reference_id' => (string) $po->id,
                             'notes' => "GRN stock intake PO #{$po->po_number} from {$po->supplier->name}",
                         ]);
                     }

@@ -96,7 +96,7 @@ class SettlementService
             $totalCommission = (int) $unpaidOrders->sum('commission_amount_paise');
             $netPayout = (int) $unpaidOrders->sum('net_seller_amount_paise');
 
-            $settlementNumber = 'SETL-' . $shop->id . '-' . date('Ymd') . '-' . strtoupper(Str::random(4));
+            $settlementNumber = 'SETL-'.$shop->id.'-'.date('Ymd').'-'.strtoupper(Str::random(4));
 
             $settlement = SellerSettlement::create([
                 'settlement_number' => $settlementNumber,
@@ -131,7 +131,7 @@ class SettlementService
     public function markSettlementPaid(SellerSettlement $settlement, string $paymentReference, ?User $admin = null): void
     {
         if ($settlement->status === 'paid') {
-            throw new RuntimeException("This settlement is already paid.");
+            throw new RuntimeException('This settlement is already paid.');
         }
 
         DB::transaction(function () use ($settlement, $paymentReference, $admin) {
@@ -167,4 +167,3 @@ class SettlementService
         });
     }
 }
-

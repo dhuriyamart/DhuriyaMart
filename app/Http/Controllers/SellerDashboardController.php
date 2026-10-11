@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProductVariant;
-use App\Models\SellerOrder;
 use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -17,7 +15,7 @@ class SellerDashboardController extends Controller
     public function index(Request $request): View
     {
         $shop = $request->user()->shop;
-        if (!$shop) {
+        if (! $shop) {
             return view('seller.onboarding');
         }
 
@@ -51,4 +49,3 @@ class SellerDashboardController extends Controller
         ));
     }
 }
-

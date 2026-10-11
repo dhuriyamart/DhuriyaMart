@@ -31,7 +31,7 @@ class Cart extends Model
 
     public function getSubtotalPaiseAttribute(): int
     {
-        return (int) $this->items->sum(fn(CartItem $item) => $item->quantity * $item->price_paise);
+        return (int) $this->items->sum(fn (CartItem $item) => $item->quantity * $item->price_paise);
     }
 
     public function getFormattedSubtotalAttribute(): string
@@ -46,9 +46,8 @@ class Cart extends Model
 
     public function getShopsAttribute(): Collection
     {
-        return $this->items->map(fn($item) => $item->variant?->product?->shop)
+        return $this->items->map(fn ($item) => $item->variant?->product?->shop)
             ->filter()
             ->unique('id');
     }
 }
-

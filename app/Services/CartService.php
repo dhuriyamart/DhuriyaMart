@@ -31,7 +31,7 @@ class CartService
             return Cart::firstOrCreate(['session_id' => $sessionId]);
         }
 
-        throw new RuntimeException("Either a user or a session ID must be provided to retrieve a cart.");
+        throw new RuntimeException('Either a user or a session ID must be provided to retrieve a cart.');
     }
 
     /**
@@ -40,13 +40,13 @@ class CartService
     public function addItem(Cart $cart, int $variantId, int $quantity = 1): CartItem
     {
         if ($quantity <= 0) {
-            throw new RuntimeException("Quantity must be greater than zero.");
+            throw new RuntimeException('Quantity must be greater than zero.');
         }
 
         $variant = ProductVariant::with('product')->findOrFail($variantId);
 
-        if (!$variant->is_active || !$variant->product->is_active || $variant->product->status !== 'approved') {
-            throw new RuntimeException("This product variant is currently unavailable for purchase.");
+        if (! $variant->is_active || ! $variant->product->is_active || $variant->product->status !== 'approved') {
+            throw new RuntimeException('This product variant is currently unavailable for purchase.');
         }
 
         $cartItem = $cart->items()->where('product_variant_id', $variantId)->first();
@@ -63,6 +63,7 @@ class CartService
                 'quantity' => $targetQuantity,
                 'price_paise' => $variant->price_paise, // Fresh price sync
             ]);
+
             return $cartItem;
         }
 
@@ -82,6 +83,7 @@ class CartService
 
         if ($quantity <= 0) {
             $item->delete();
+
             return null;
         }
 
@@ -123,15 +125,15 @@ class CartService
         $code = strtoupper(trim($code));
         $coupon = Coupon::where('code', $code)->first();
 
-        if (!$coupon) {
+        if (! $coupon) {
             return ['success' => false, 'message' => 'Invalid promotional coupon code.'];
         }
 
         $subtotalPaise = $cart->subtotal_paise;
-        if (!$coupon->isValidForAmount($subtotalPaise)) {
+        if (! $coupon->isValidForAmount($subtotalPaise)) {
             return [
                 'success' => false,
-                'message' => "Coupon {$code} is not applicable. Minimum order value of ₹" . number_format($coupon->min_order_value_paise / 100, 2) . " required.",
+                'message' => "Coupon {$code} is not applicable. Minimum order value of ₹".number_format($coupon->min_order_value_paise / 100, 2).' required.',
             ];
         }
 
@@ -203,12 +205,12 @@ class CartService
 
         foreach ($cart->items as $item) {
             $variant = $item->variant;
-            if (!$variant || !$variant->is_active || $variant->stock_quantity < $item->quantity) {
+            if (! $variant || ! $variant->is_active || $variant->stock_quantity < $item->quantity) {
                 $outOfStock[] = [
                     'item' => $item,
                     'available' => $variant ? $variant->stock_quantity : 0,
                     'requested' => $item->quantity,
-                    'name' => $variant ? $variant->product->name . ' (' . $variant->name . ')' : 'Product Unavailable',
+                    'name' => $variant ? $variant->product->name.' ('.$variant->name.')' : 'Product Unavailable',
                 ];
             }
         }
@@ -222,7 +224,7 @@ class CartService
     public function mergeGuestCartIntoUserCart(string $sessionId, User $user): void
     {
         $guestCart = Cart::where('session_id', $sessionId)->first();
-        if (!$guestCart || $guestCart->items()->count() === 0) {
+        if (! $guestCart || $guestCart->items()->count() === 0) {
             return;
         }
 
@@ -244,7 +246,7 @@ class CartService
                     ]);
                 }
             }
-            if ($guestCart->coupon_code && !$userCart->coupon_code) {
+            if ($guestCart->coupon_code && ! $userCart->coupon_code) {
                 $userCart->update(['coupon_code' => $guestCart->coupon_code]);
             }
             $guestCart->items()->delete();
@@ -252,4 +254,3 @@ class CartService
         });
     }
 }
-

@@ -99,8 +99,9 @@ class Product extends Model
         if ($primary && $primary->image_path) {
             return str_starts_with($primary->image_path, 'http')
                 ? $primary->image_path
-                : asset('storage/' . $primary->image_path);
+                : asset('storage/'.$primary->image_path);
         }
+
         return 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
     }
 
@@ -112,6 +113,7 @@ class Product extends Model
     public function getAverageRatingAttribute(): float
     {
         $avg = $this->approvedReviews()->avg('rating');
+
         return $avg ? round((float) $avg, 1) : 0.0;
     }
 
@@ -135,4 +137,3 @@ class Product extends Model
         return $this->status === 'approved';
     }
 }
-

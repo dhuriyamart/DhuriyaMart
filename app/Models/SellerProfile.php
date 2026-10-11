@@ -35,4 +35,3 @@ class SellerProfile extends Model
         return $this->belongsTo(Shop::class);
     }
 }
-

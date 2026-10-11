@@ -1509,18 +1509,18 @@ class KiranaHardwareSeeder extends Seeder
             $basePricePaise = Money::toPaise($item['retail']);
             $costPricePaise = Money::toPaise($item['buy']);
 
-            $slug = Str::slug($item['name'] . '-' . $shop->id);
+            $slug = Str::slug($item['name'].'-'.$shop->id);
 
             $specs = [
                 'Unit' => $item['unit'],
                 'Category' => $item['cat']->name,
-                'Procurement Buy Price' => '₹' . number_format($item['buy'], 2),
-                'Indicative Retail Price' => '₹' . number_format($item['retail'], 2),
-                'Gross Profit Margin' => round((($item['retail'] - $item['buy']) / $item['retail']) * 100, 1) . '%',
+                'Procurement Buy Price' => '₹'.number_format($item['buy'], 2),
+                'Indicative Retail Price' => '₹'.number_format($item['retail'], 2),
+                'Gross Profit Margin' => round((($item['retail'] - $item['buy']) / $item['retail']) * 100, 1).'%',
             ];
 
             if (isset($item['benchmark'])) {
-                $specs['Official All-India Avg (Oct 2026)'] = '₹' . number_format($item['benchmark'], 2);
+                $specs['Official All-India Avg (Oct 2026)'] = '₹'.number_format($item['benchmark'], 2);
             }
 
             $product = Product::updateOrCreate(
@@ -1529,7 +1529,7 @@ class KiranaHardwareSeeder extends Seeder
                     'shop_id' => $shop->id,
                     'category_id' => $item['cat']->id,
                     'name' => $item['name'],
-                    'short_description' => $item['desc'] . " Standard pack: {$item['unit']}.",
+                    'short_description' => $item['desc']." Standard pack: {$item['unit']}.",
                     'description' => "High quality {$item['name']} packaged and supplied by {$shop->name}. Verified retail stock. Unit packaging: {$item['unit']}. Suitable for residential, commercial and contractor use.",
                     'specifications' => $specs,
                     'status' => 'approved',
@@ -1556,7 +1556,7 @@ class KiranaHardwareSeeder extends Seeder
 
             // Record initial inventory movement if not yet logged
             $hasMovement = InventoryMovement::where('product_variant_id', $variant->id)->exists();
-            if (!$hasMovement) {
+            if (! $hasMovement) {
                 InventoryMovement::create([
                     'product_variant_id' => $variant->id,
                     'user_id' => $sellerUser->id,
@@ -1581,4 +1581,3 @@ class KiranaHardwareSeeder extends Seeder
         }
     }
 }
-

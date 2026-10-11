@@ -54,4 +54,3 @@ class Refund extends Model
         return Money::format($this->amount_paise);
     }
 }
-

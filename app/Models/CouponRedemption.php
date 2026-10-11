@@ -45,4 +45,3 @@ class CouponRedemption extends Model
         return Money::format($this->discount_amount_paise);
     }
 }
-

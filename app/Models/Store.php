@@ -65,4 +65,3 @@ class Store extends Model
             ->first();
     }
 }
-

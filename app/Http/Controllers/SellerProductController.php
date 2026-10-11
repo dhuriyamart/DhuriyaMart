@@ -11,7 +11,6 @@ use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -55,11 +54,11 @@ class SellerProductController extends Controller
         ]);
 
         $basePricePaise = Money::toPaise($validated['base_price']);
-        $comparePricePaise = !empty($validated['compare_at_price']) ? Money::toPaise($validated['compare_at_price']) : null;
+        $comparePricePaise = ! empty($validated['compare_at_price']) ? Money::toPaise($validated['compare_at_price']) : null;
 
         $slug = Str::slug($validated['name']);
         if (Product::where('slug', $slug)->exists()) {
-            $slug .= '-' . rand(100, 999);
+            $slug .= '-'.rand(100, 999);
         }
 
         DB::transaction(function () use ($shop, $validated, $basePricePaise, $comparePricePaise, $slug, $request) {
@@ -92,7 +91,7 @@ class SellerProductController extends Controller
                 $imagePath = $request->file('image_file')->store('products', 'public');
             }
 
-            if (!$imagePath) {
+            if (! $imagePath) {
                 $imagePath = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80';
             }
 
@@ -170,4 +169,3 @@ class SellerProductController extends Controller
             ->with('success', 'Product deleted.');
     }
 }
-

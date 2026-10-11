@@ -46,7 +46,7 @@ class Coupon extends Model
 
     public function isValidForAmount(int $subtotalPaise): bool
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
@@ -71,7 +71,7 @@ class Coupon extends Model
 
     public function calculateDiscount(int $subtotalPaise): int
     {
-        if (!$this->isValidForAmount($subtotalPaise)) {
+        if (! $this->isValidForAmount($subtotalPaise)) {
             return 0;
         }
 
@@ -80,6 +80,7 @@ class Coupon extends Model
             if ($this->max_discount_paise && $discount > $this->max_discount_paise) {
                 $discount = $this->max_discount_paise;
             }
+
             return min($discount, $subtotalPaise);
         }
 
@@ -92,12 +93,12 @@ class Coupon extends Model
         if ($this->discount_type === 'percentage') {
             $desc = "{$this->discount_value}% OFF";
             if ($this->max_discount_paise) {
-                $desc .= " up to " . Money::format($this->max_discount_paise);
+                $desc .= ' up to '.Money::format($this->max_discount_paise);
             }
+
             return $desc;
         }
 
-        return Money::format($this->discount_value) . " OFF";
+        return Money::format($this->discount_value).' OFF';
     }
 }
-

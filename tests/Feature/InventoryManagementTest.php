@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
-use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Services\CartService;
@@ -166,4 +165,3 @@ class InventoryManagementTest extends TestCase
         $this->assertEquals('cancelled', $sellerOrder->fresh()->status);
     }
 }
-

@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Address;
 use App\Models\Banner;
-use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Page;
 use App\Models\Role;
@@ -12,7 +11,6 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {

@@ -83,8 +83,10 @@ class ProductVariant extends Model
     {
         if ($this->compare_at_price_paise && $this->compare_at_price_paise > $this->price_paise) {
             $diff = $this->compare_at_price_paise - $this->price_paise;
+
             return (int) round(($diff / $this->compare_at_price_paise) * 100);
         }
+
         return 0;
     }
 
@@ -103,4 +105,3 @@ class ProductVariant extends Model
         return $this->stock_quantity <= 0;
     }
 }
-

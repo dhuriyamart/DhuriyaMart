@@ -65,4 +65,3 @@ class AdminPaymentController extends Controller
         }
     }
 }
-

@@ -43,4 +43,3 @@ class PurchaseOrderItem extends Model
         return round($this->total_cost_paise / 100, 2);
     }
 }
-

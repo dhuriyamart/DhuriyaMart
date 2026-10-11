@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
-use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductReview;
 use App\Models\ProductVariant;
@@ -82,6 +81,7 @@ class AccountController extends Controller
 
         try {
             $this->orderService->cancelOrder($order, $request->input('reason'), $request->user());
+
             return back()->with('success', 'Your order cancellation request has been processed.');
         } catch (RuntimeException $e) {
             return back()->with('error', $e->getMessage());
@@ -128,6 +128,7 @@ class AccountController extends Controller
     public function addresses(Request $request): View
     {
         $addresses = $request->user()->addresses()->latest()->get();
+
         return view('customer.addresses', compact('addresses'));
     }
 
@@ -149,11 +150,11 @@ class AccountController extends Controller
 
         $user = $request->user();
 
-        if (!empty($validated['is_default'])) {
+        if (! empty($validated['is_default'])) {
             $user->addresses()->update(['is_default' => false]);
         }
 
-        if (!empty($validated['address_id'])) {
+        if (! empty($validated['address_id'])) {
             $address = $user->addresses()->findOrFail($validated['address_id']);
             $address->update($validated);
         } else {
@@ -168,6 +169,7 @@ class AccountController extends Controller
     public function deleteAddress(Request $request, int $id): RedirectResponse
     {
         $request->user()->addresses()->where('id', $id)->delete();
+
         return back()->with('success', 'Address deleted.');
     }
 
@@ -192,6 +194,7 @@ class AccountController extends Controller
 
         if ($existing) {
             $existing->delete();
+
             return back()->with('info', 'Item removed from your Wishlist.');
         }
 
@@ -216,7 +219,7 @@ class AccountController extends Controller
 
         // Check if user has bought this product
         $hasPurchased = $user->orders()
-            ->whereHas('items', fn($q) => $q->where('product_id', $productId))
+            ->whereHas('items', fn ($q) => $q->where('product_id', $productId))
             ->exists();
 
         ProductReview::updateOrCreate(
@@ -233,4 +236,3 @@ class AccountController extends Controller
         return back()->with('success', 'Thank you! Your verified product review has been submitted.');
     }
 }
-

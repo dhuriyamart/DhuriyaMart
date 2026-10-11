@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProductVariant;
 use App\Models\PurchaseOrder;
 use App\Models\Store;
 use App\Models\Supplier;
@@ -46,7 +45,18 @@ class AdminPurchaseOrderController extends Controller
      */
     public function autoGenerate(Request $request): RedirectResponse
     {
-        $store = Store::where('is_active', true)->firstOrFail();
+        $store = Store::where('is_active', true)->first()
+            ?? Store::firstOrCreate(
+                ['code' => 'STORE-MAU-01'],
+                [
+                    'name' => 'Dhuriya Mart - Flagship Village Store #01',
+                    'village_name' => 'Ranipur / Mau Dehat',
+                    'district' => 'Mau',
+                    'state' => 'Uttar Pradesh',
+                    'pincode' => '275101',
+                    'is_active' => true,
+                ]
+            );
         $user = $request->user();
 
         $generated = $this->poService->generateAutoDraftPOs($store, $user);
@@ -97,7 +107,6 @@ class AdminPurchaseOrderController extends Controller
 
         $this->poService->receiveGoods($po, $received, $damaged);
 
-        return back()->with('success', "Goods Received Note processed! Live inventory updated for all received units.");
+        return back()->with('success', 'Goods Received Note processed! Live inventory updated for all received units.');
     }
 }
-

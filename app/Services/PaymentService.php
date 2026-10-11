@@ -25,7 +25,7 @@ class PaymentService
      */
     public function createPaymentOrder(Order $order, string $provider = 'razorpay'): Payment
     {
-        $gatewayOrderId = 'order_' . Str::random(14);
+        $gatewayOrderId = 'order_'.Str::random(14);
 
         return Payment::create([
             'order_id' => $order->id,
@@ -43,7 +43,7 @@ class PaymentService
     public function verifyPayment(Order $order, array $attributes): array
     {
         $payment = $order->payments()->latest('id')->first();
-        if (!$payment) {
+        if (! $payment) {
             $payment = $this->createPaymentOrder($order, 'razorpay');
         }
 
@@ -51,7 +51,7 @@ class PaymentService
         $transactionId = $attributes['razorpay_payment_id'] ?? null;
         $signature = $attributes['razorpay_signature'] ?? null;
 
-        if (!$transactionId) {
+        if (! $transactionId) {
             return ['success' => false, 'message' => 'Missing transaction identifier.'];
         }
 
@@ -64,11 +64,11 @@ class PaymentService
 
         // Also permit mock test signatures in sandbox environment
         $isSandbox = Setting::get('payment_sandbox_mode', '1') === '1';
-        if (!$isValidSignature && $isSandbox && str_starts_with((string) $transactionId, 'pay_mock_')) {
+        if (! $isValidSignature && $isSandbox && str_starts_with((string) $transactionId, 'pay_mock_')) {
             $isValidSignature = true;
         }
 
-        if (!$isValidSignature) {
+        if (! $isValidSignature) {
             $payment->update([
                 'status' => 'failed',
                 'error_code' => 'BAD_SIGNATURE',
@@ -147,12 +147,13 @@ class PaymentService
 
         // 2. Validate webhook signature if provided
         $secret = Setting::get('razorpay_key_secret', 'rzp_test_DhuriyaMartSecretKey');
-        if ($signature && !empty($payload)) {
+        if ($signature && ! empty($payload)) {
             $expectedSignature = hash_hmac('sha256', json_encode($payload), $secret);
             $isSandbox = Setting::get('payment_sandbox_mode', '1') === '1';
 
-            if (!hash_equals($expectedSignature, $signature) && !$isSandbox) {
+            if (! hash_equals($expectedSignature, $signature) && ! $isSandbox) {
                 Log::warning("DhuriyaMart Payment Webhook: Invalid signature received for event {$eventId}");
+
                 return ['success' => false, 'message' => 'Invalid webhook signature'];
             }
         }
@@ -182,7 +183,7 @@ class PaymentService
                     $order = $payment->order;
                     $this->verifyPayment($order, [
                         'razorpay_order_id' => $payment->gateway_order_id,
-                        'razorpay_payment_id' => $transactionId ?? ('txn_' . Str::random(10)),
+                        'razorpay_payment_id' => $transactionId ?? ('txn_'.Str::random(10)),
                         'razorpay_signature' => 'webhook_verified',
                     ]);
                 }
@@ -198,7 +199,7 @@ class PaymentService
                 'success' => true,
                 'duplicate' => false,
                 'event_id' => $eventId,
-                'message' => "Webhook processed successfully",
+                'message' => 'Webhook processed successfully',
             ];
         });
     }
@@ -209,7 +210,7 @@ class PaymentService
     public function processRefund(Payment $payment, int $amountPaise, string $reason, ?User $admin = null): Refund
     {
         if ($payment->status !== 'successful') {
-            throw new RuntimeException("Only successful payments can be refunded.");
+            throw new RuntimeException('Only successful payments can be refunded.');
         }
 
         $order = $payment->order;
@@ -218,12 +219,12 @@ class PaymentService
 
         if ($amountPaise > $availableToRefund) {
             throw new RuntimeException(
-                "Requested refund amount exceeds available refundable balance. Max refundable: ₹" . number_format($availableToRefund / 100, 2)
+                'Requested refund amount exceeds available refundable balance. Max refundable: ₹'.number_format($availableToRefund / 100, 2)
             );
         }
 
         return DB::transaction(function () use ($payment, $order, $amountPaise, $reason, $admin) {
-            $gatewayRefundId = 'rfnd_' . Str::random(14);
+            $gatewayRefundId = 'rfnd_'.Str::random(14);
 
             $refund = Refund::create([
                 'payment_id' => $payment->id,
@@ -246,11 +247,10 @@ class PaymentService
                 'from_status' => $order->status,
                 'to_status' => $order->status,
                 'changed_by_user_id' => $admin?->id ?? auth()->id(),
-                'notes' => "Refund of ₹" . number_format($amountPaise / 100, 2) . " processed ({$gatewayRefundId}): {$reason}",
+                'notes' => 'Refund of ₹'.number_format($amountPaise / 100, 2)." processed ({$gatewayRefundId}): {$reason}",
             ]);
 
             return $refund;
         });
     }
 }
-

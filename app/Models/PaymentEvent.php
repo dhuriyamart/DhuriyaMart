@@ -32,4 +32,3 @@ class PaymentEvent extends Model
         return $this->belongsTo(Payment::class);
     }
 }
-

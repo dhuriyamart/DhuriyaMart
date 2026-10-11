@@ -36,12 +36,12 @@ class OrderService
         ?string $customerNotes = null
     ): Order {
         if ($cart->items()->count() === 0) {
-            throw new RuntimeException("Your shopping cart is empty.");
+            throw new RuntimeException('Your shopping cart is empty.');
         }
 
         // 1. Verify stock for all items
         $outOfStock = $this->cartService->validateCartStock($cart);
-        if (!empty($outOfStock)) {
+        if (! empty($outOfStock)) {
             $names = implode(', ', array_column($outOfStock, 'name'));
             throw new RuntimeException("The following items are out of stock: {$names}");
         }
@@ -51,7 +51,7 @@ class OrderService
 
         return DB::transaction(function () use ($cart, $user, $shippingAddress, $paymentMethod, $customerNotes, $totals) {
             // Generate unique Order Number
-            $orderNumber = 'ORD-' . strtoupper(Str::random(6)) . '-' . time();
+            $orderNumber = 'ORD-'.strtoupper(Str::random(6)).'-'.time();
 
             // Create Parent Order
             $order = Order::create([
@@ -87,12 +87,12 @@ class OrderService
             ]);
 
             // Group items by shop to create isolated SellerOrders
-            $itemsByShop = $cart->items->groupBy(fn($item) => $item->variant->product->shop_id);
+            $itemsByShop = $cart->items->groupBy(fn ($item) => $item->variant->product->shop_id);
             $totalSubtotal = $totals['subtotal_paise'];
 
             foreach ($itemsByShop as $shopId => $cartItems) {
                 $shop = $cartItems->first()->variant->product->shop;
-                $shopSubtotal = (int) $cartItems->sum(fn($i) => $i->quantity * $i->price_paise);
+                $shopSubtotal = (int) $cartItems->sum(fn ($i) => $i->quantity * $i->price_paise);
 
                 // Pro-rate discount and shipping per shop proportion
                 $shopProportion = $totalSubtotal > 0 ? ($shopSubtotal / $totalSubtotal) : 0;
@@ -104,7 +104,7 @@ class OrderService
                 // Commission calculation
                 $commissionCalc = $this->commissionService->calculateCommission($shop, $shopSubtotal);
 
-                $sellerOrderNumber = 'SLR-' . $shop->id . '-' . strtoupper(Str::random(6));
+                $sellerOrderNumber = 'SLR-'.$shop->id.'-'.strtoupper(Str::random(6));
 
                 $sellerOrder = SellerOrder::create([
                     'order_id' => $order->id,
@@ -202,8 +202,8 @@ class OrderService
      */
     public function cancelOrder(Order $order, string $reason, ?User $user = null): bool
     {
-        if (!$order->canBeCancelled()) {
-            throw new RuntimeException("This order cannot be cancelled in its current state.");
+        if (! $order->canBeCancelled()) {
+            throw new RuntimeException('This order cannot be cancelled in its current state.');
         }
 
         return DB::transaction(function () use ($order, $reason, $user) {
@@ -263,8 +263,8 @@ class OrderService
      */
     public function cancelSellerOrder(SellerOrder $sellerOrder, string $reason, ?User $user = null): bool
     {
-        if (!$sellerOrder->canBeCancelled()) {
-            throw new RuntimeException("Seller order cannot be cancelled in its current state.");
+        if (! $sellerOrder->canBeCancelled()) {
+            throw new RuntimeException('Seller order cannot be cancelled in its current state.');
         }
 
         return DB::transaction(function () use ($sellerOrder, $reason, $user) {
@@ -317,7 +317,7 @@ class OrderService
     public function updateSellerOrderStatus(SellerOrder $sellerOrder, string $newStatus, ?string $notes = null, ?User $user = null): void
     {
         $validStatuses = ['pending', 'confirmed', 'processing', 'dispatched', 'delivered', 'cancelled', 'returned'];
-        if (!in_array($newStatus, $validStatuses)) {
+        if (! in_array($newStatus, $validStatuses)) {
             throw new RuntimeException("Invalid order status: {$newStatus}");
         }
 
@@ -343,7 +343,7 @@ class OrderService
             $order = $sellerOrder->order;
             $allStatuses = $order->sellerOrders()->pluck('status');
 
-            if ($allStatuses->every(fn($s) => $s === 'delivered')) {
+            if ($allStatuses->every(fn ($s) => $s === 'delivered')) {
                 $order->update(['status' => 'completed']);
             } elseif ($allStatuses->contains('dispatched') || $allStatuses->contains('processing')) {
                 $order->update(['status' => 'processing']);
@@ -351,4 +351,3 @@ class OrderService
         });
     }
 }
-
